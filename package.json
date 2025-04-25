@@ -1,0 +1,18 @@
+{
+  "name": "fantastic_spoon_dc",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "dev": "bun --env-file=.env --watch src/index.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "seyfert": "^3.0.0"
+  }
+}
