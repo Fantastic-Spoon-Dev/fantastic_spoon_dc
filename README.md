@@ -1,16 +1,5 @@
 # Fantastic Spoon - Discord Special Edition
 
-To install dependencies:
+Join Official Discord Server: [![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/3xWpb8kGjT)
 
-```bash
-bun install
-```
-
-To run in development mode:
-
-```bash
-bun dev
-```
-
-This project was created using `bun init` in bun v1.2.10. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
-Powered by [itzdrli](https://git.itzdrli.cc/itzdrli)
+Fantastic Spoon  © 2025 [itzdrli](https://git.itzdrli.cc/itzdrli) - All Rights Reserved. 
