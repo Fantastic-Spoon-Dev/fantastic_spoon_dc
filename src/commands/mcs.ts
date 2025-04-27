@@ -10,7 +10,7 @@ import {
 import mc from "@ahdg/minecraftstatuspinger"
 import { autoToHTML as motdParser } from '@sfirew/minecraft-motd-parser'; 
 import type { motdJsonType } from '@sfirew/minecraft-motd-parser/types/types';
-import { browser } from '..';
+import { browser, prisma } from '../index.ts';
 
 interface Status {
   description: motdJsonType;
@@ -36,7 +36,19 @@ const options = {
 export default class McsCommand extends Command {
  
   async run(ctx: CommandContext<typeof options>) {
-    let ip:string = ctx.options.ip || 'de.itzdrli.cc';
+    const res = await prisma.mcsBind.findFirst({
+      where: {
+        channelId: ctx.channelId
+      }
+    })
+    let ip:string = ''
+    if (ctx.options.ip) {
+      ip = ctx.options.ip
+    } else if (res) {
+      ip = res.ip
+    } else {
+      ip = 'de.itzdrli.cc'
+    }
     let port:number = ctx.options.port || 25565;
     if (ip.includes(':')) {
       let [host = ip, portValue] = ip.split(":")
@@ -45,7 +57,7 @@ export default class McsCommand extends Command {
     }
     let data: any
     try {
-      mc.setDnsServers(['8.8.8.8'])
+      mc.setDnsServers(['8.8.8.8', '9.9.9.9'])
       data = await mc.lookup({
         host: ip,
         port: port,
@@ -55,6 +67,7 @@ export default class McsCommand extends Command {
       console.error(e)
       return `ERROR, ${e}`
     }
+
     const page = await browser.newPage();
     const status: Status = data.status as any
     let result = `<p>${ip} - Latency ${data.latency}</p>`
@@ -71,6 +84,7 @@ export default class McsCommand extends Command {
       type: 'webp',
       fullPage: true
     })
+    const channelId = ctx.guildId
     await page.close()
     const buffer = Buffer.from(screenshot, 'base64')
     await ctx.write({
@@ -80,6 +94,25 @@ export default class McsCommand extends Command {
           .setFile('buffer', buffer)
       ]
     });
+    if (res && res.ip !== ip){
+      await prisma.mcsBind.update({
+        where: {
+          id: res.id,
+          channelId: ctx.channelId
+        },
+        data: {
+          ip: ip
+        }
+      });
+    }
+    if (!res) {
+      await prisma.mcsBind.create({
+        data: {
+          channelId: ctx.channelId,
+          ip: ip
+        }
+      });
+    }
   }
 }
 

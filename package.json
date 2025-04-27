@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prisma": "^6.6.0"
   },
   "scripts": {
     "dev": "bun --env-file=.env --watch src/index.ts"
@@ -14,6 +15,7 @@
   },
   "dependencies": {
     "@ahdg/minecraftstatuspinger": "^1.1.5",
+    "@prisma/client": "^6.6.0",
     "@sfirew/minecraft-motd-parser": "^1.1.4",
     "puppeteer": "^24.7.2",
     "seyfert": "^3.0.0"

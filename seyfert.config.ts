@@ -3,8 +3,10 @@ import { config } from "seyfert";
 export default config.bot({
     token: process.env.DC_TOKEN ?? "",
     locations: {
-        base: "src", // replace with "src" if using bun
-        commands: "commands"
+        base: "src",
+        commands: "commands",
+        events: "events",
+        components: "components",
     },
     intents: ["Guilds"],
     // This configuration is optional, in case you want to receive interactions via HTTP
