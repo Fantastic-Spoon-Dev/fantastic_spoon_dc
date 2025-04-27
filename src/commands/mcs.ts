@@ -36,6 +36,12 @@ const options = {
 export default class McsCommand extends Command {
  
   async run(ctx: CommandContext<typeof options>) {
+    if (ctx.options.ip && !/^(?!:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?$/.test(ctx.options.ip)) {
+      await ctx.write({
+        content: 'Invalid IP address'
+      })
+      return
+    }
     const res = await prisma.mcsBind.findFirst({
       where: {
         channelId: ctx.channelId
@@ -65,7 +71,10 @@ export default class McsCommand extends Command {
       })
     } catch (e) {
       console.error(e)
-      return `ERROR, ${e}`
+      await ctx.write({
+        content: `${e}`
+      }) 
+      return
     }
 
     const page = await browser.newPage();
