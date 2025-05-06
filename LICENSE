@@ -1,0 +1,39 @@
+Modified GNU Affero General Public License Version 3
+
+Copyright (c) 2025 itzdrli
+
+This program is free software but with additional restrictions:
+
+1. Source Code Distribution:
+   - You must make any modified versions of the software publicly available.
+   - The source code must be distributed along with the software.
+   - You must include prominent notices stating that you modified it, and provide
+     accurate attribution to the original author.
+
+2. Commercial Use Restriction:
+   - Commercial use of this software is strictly prohibited.
+   - You may not use this software for any commercial purposes or monetary gain.
+
+3. Copyright Notice Protection:
+   - The original copyright notice and author attribution must be preserved.
+   - You may not remove or modify any copyright notices or attributions.
+   - All copies must carry prominent notices stating that this work is protected by
+     this license.
+
+4. Network Use:
+   - If you run a modified version of the software on a server that users can
+     interact with remotely through a computer network, you must provide the
+     complete source code to those users.
+
+5. Additional Restrictions:
+   - All modifications must be released under the same license terms.
+   - You must document all changes made to the original software.
+   - You must include a copy of this license with any distribution.
+
+6. No Warranty:
+   - This software is provided "as is" without warranty of any kind.
+   - The author is not liable for any damages arising from the use of this software.
+
+Violations of these terms will automatically terminate your rights under this license.
+
+For the complete GNU AGPL v3 license text, see <https://www.gnu.org/licenses/agpl-3.0.html>
