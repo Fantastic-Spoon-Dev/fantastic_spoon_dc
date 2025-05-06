@@ -22,3 +22,12 @@ model mcsBind {
   @@map("mcs_binds")
   @@index([channelId])
 }
+
+model brawlPlayer {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  playerTag String
+
+  @@map("brawl_players")
+  @@index([userId])
+}
