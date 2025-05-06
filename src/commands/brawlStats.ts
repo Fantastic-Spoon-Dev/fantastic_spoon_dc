@@ -85,11 +85,11 @@ export default class brawlStatsCommand extends Command {
 function generateBrawlStatsHtml(data: BrawlPlayer): string {
   const stats = [
     `Player: ${data.name}`,
-    `Trophies: ${data.trophies}`,
-    `3vs3 Victories: ${data['3vs3Victories']}`,
-    `Solo Victories: ${data.soloVictories}`,
-    `Duo Victories: ${data.duoVictories}`,
-    `Total Brawlers: ${data.brawlers.length}`
+    `Trophies: ${data.trophies} 🏆`,
+    `3vs3 Victories: ${data['3vs3Victories']} 🏅`,
+    `Solo Victories: ${data.soloVictories} 🏅`,
+    `Duo Victories: ${data.duoVictories} 🏅`,
+    `Total Brawlers: ${data.brawlers.length} 🤗`,
   ].join('<br>')
 
   return `
