@@ -85,8 +85,8 @@ export default class McsCommand extends Command {
     result += `<p>Online - ${status.players.online}/${status.players.max}</p>`
     const html = generateHtml(result, status.favicon)
 
-    let hight = 340
-    if (!status.favicon) hight = 300
+    let hight = 320
+    if (!status.favicon) hight = 280
     await page.setViewport({ width: 650, height: hight })
     await page.setContent(html)
     await page.waitForSelector('body')
