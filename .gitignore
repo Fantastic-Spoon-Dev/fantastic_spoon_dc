@@ -38,3 +38,5 @@ db/
 src/generated/
 bun.lock
 commands.json
+
+core

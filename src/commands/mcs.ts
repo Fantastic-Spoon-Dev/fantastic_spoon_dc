@@ -11,6 +11,7 @@ import mc from "@ahdg/minecraftstatuspinger"
 import { autoToHTML as motdParser } from '@sfirew/minecraft-motd-parser'; 
 import type { motdJsonType } from '@sfirew/minecraft-motd-parser/types/types';
 import { browser, prisma } from '../index.ts';
+import { imgGen, imgHtmlT1 } from '../utils/imageGen.ts';
 
 interface Status {
   description: motdJsonType;
@@ -53,7 +54,7 @@ export default class McsCommand extends Command {
     } else if (res) {
       ip = res.ip
     } else {
-      ip = 'de.itzdrli.cc'
+      ip = 'join.itzdrli.cc'
     }
     let port:number = ctx.options.port || 25565;
     if (ip.includes(':')) {
@@ -77,27 +78,14 @@ export default class McsCommand extends Command {
       return
     }
 
-    const page = await browser.newPage();
     const status: Status = data.status as any
     let result = `<p>${ip} - Latency ${data.latency} ms</p>`
     result += `<p>Version: ${status.version.name} - ${status.version.protocol}</p>`
     result += `<p>${motdParser(status.description)}</p>`
     result += `<p>Online - ${status.players.online}/${status.players.max}</p>`
-    const html = generateHtml(result, status.favicon)
+    const html = await imgHtmlT1(status.favicon, result)
+    const buffer:any = await imgGen(html)
 
-    let hight = 320
-    if (!status.favicon) hight = 280
-    await page.setViewport({ width: 650, height: hight })
-    await page.setContent(html)
-    await page.waitForSelector('body')
-    const screenshot = await page.screenshot({
-      encoding: 'base64',
-      type: 'webp',
-      fullPage: true
-    })
-    const channelId = ctx.guildId
-    await page.close()
-    const buffer = Buffer.from(screenshot, 'base64')
     await ctx.write({
       files: [
         new AttachmentBuilder()
@@ -127,31 +115,3 @@ export default class McsCommand extends Command {
   }
 }
 
-function generateHtml(result: string, icon64: string): string {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=auto, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background-color: #1e1e2e;
-      color: #cdd6f4;
-    }
-  </style>
-</head>
-<body style="width: 650px">
-  <div class="container mx-auto py-8">
-    ${icon64 ? `<div class="text-center"><img src=${icon64} alt="icon" class="w-80px h-80px mx-auto" /></div>` : ''}
-    <div class="text-center mt-4">
-      <div class="text-lg font-bold text-[#cdd6f4]">${result}</div>
-    </div>
-  </div>
-  <footer class="bg-[#313244] text-center py-2">
-    <p class="text-sm text-[#cdd6f4]">Powered by FSD</p>
-  </footer>
-</body>
-</html>`;
-}

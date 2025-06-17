@@ -1,9 +1,30 @@
 import { Client } from "seyfert";
 import puppeteer from "puppeteer"; 
+import { pino } from "pino";
+import fs from "fs";
+import pretty from "pino-pretty";
 
 import type { ParseClient } from "seyfert";
 
 import { PrismaClient } from "./generated/prisma";
+
+let streams = [
+  {stream: fs.createWriteStream('./logs/info.stream.out')},
+  {stream: pretty()},
+  {level: 'debug', stream: fs.createWriteStream('./logs/debug.stream.out')},
+  {level: 'fatal', stream: fs.createWriteStream('./logs/fatal.stream.out')}
+]
+
+export const logger = pino({
+  level: 'debug',
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+      translateTime: 'SYS:standard',
+    }
+  }
+}, pino.multistream(streams))
 
 export const prisma = new PrismaClient()
 declare module 'seyfert' {
@@ -11,27 +32,12 @@ declare module 'seyfert' {
 }
 
 const client = new Client();
- 
-export const browser = await puppeteer.launch({
-  args: ['--no-sandbox', '--disable-setuid-sanbox']
-});
 
-const cleanup = async () => {
-    console.log('Closing browser...');
-    await browser.close();
-    process.exit();
-};
-
-process.on('SIGINT', cleanup); 
-process.on('SIGTERM', cleanup); 
-process.on('uncaughtException', async (err) => {
-    console.error('Uncaught Exception:', err);
-    await cleanup();
-});
-process.on('unhandledRejection', async (err) => {
-    console.error('Unhandled Rejection:', err);
-    await cleanup();
-});
+export const browser = await puppeteer.connect({
+  browserWSEndpoint: 'ws://chrome:3000'
+})
 
 client.start()
-  .then(() => client.uploadCommands({ cachePath: './commands.json' }));
+  .then(() => client.uploadCommands({ cachePath: './commands.json' }))
+
+logger.info("ONLINE")

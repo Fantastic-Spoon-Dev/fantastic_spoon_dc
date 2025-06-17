@@ -2,10 +2,13 @@ import {
   AttachmentBuilder,
   Command,
   Declare,
-  type CommandContext
+  Options,
+  type CommandContext,
+  createStringOption
 } from 'seyfert';
 
-import { prisma, browser } from '..';
+import { prisma, logger } from '..';
+import { imgHtmlT1, imgGen } from '../utils/imageGen';
 
 interface BrawlPlayer {
   name: string;
@@ -27,47 +30,114 @@ interface BrawlPlayer {
   brawlers: any[];
 }
 
+const options = {
+  playertag: createStringOption({
+    description: 'Your Brawl Stars player tag'
+  }),
+}
+
 @Declare({
   name: 'brawlstats',
   description: 'Query your Brawl Stars player stats'
 })
+@Options(options)
 
 export default class brawlStatsCommand extends Command {
-  async run(ctx: CommandContext) {
-    const res = await prisma.brawlPlayer.findFirst({
-      where: {
-        userId: ctx.author.id
+  async run(ctx: CommandContext<typeof options>) {
+    let tag = ""
+    if (ctx.options.playertag) {
+      tag = ctx.options.playertag
+      if (!tag.startsWith("#")) tag = "#" + tag
+      const playerTagRegex = /^#[0-9A-Z]{6,10}$/
+      if (!playerTagRegex.test(ctx.options.playertag)) {
+        await ctx.write({
+          content: 'Invalid player tag (Example: `#A1B2C3D4E`)'
+        })
+        return
       }
-    })
-    if (!res) {
+      const userId = ctx.author.id
+      const res = await prisma.brawlPlayer.findFirst({
+        where: {
+          userId: userId
+        }
+      })
+      if (res && res.playerTag !== tag) {
+        try {
+          await prisma.brawlPlayer.update({
+            where: {
+              id: res.id,
+              userId: userId
+            },
+            data: {
+              playerTag: tag
+            }
+          })
+        } catch (e) {
+          logger.debug(e)
+          await ctx.write({
+            content: `${e}`
+          })
+        }
+      } else if (!res) {
+        try {
+          await prisma.brawlPlayer.create({
+            data: {
+              userId: userId,
+              playerTag: tag
+            }
+          })
+        } catch (e) {
+          logger.debug(e)
+          await ctx.write({
+            content: `${e}`
+          })
+        }
+      }
+
+    } else {
+      const res = await prisma.brawlPlayer.findFirst({
+        where: {
+          userId: ctx.author.id
+        }
+      })
+      if (!res) {
+        await ctx.write({
+          content: `Provide a valid Brawl Stars player tag`
+        })
+        return
+      }
+      tag = res.playerTag
+    }
+    tag = tag.replace('#', '%23')
+    let data
+    try {
+      data = await fetchBrawlPlayer(tag) as BrawlPlayer
+    } catch (e) {
+      logger.debug(`Error fetching Brawl Stars player data: ${e}`)
       await ctx.write({
-        content: `Your Discord account has not associated to a Brawl Stars playertag, use \`brawlbind\` to associate`
+        content: `${e}, please try again later`
       })
       return
     }
-    let tag = res.playerTag.replace('#', '%23')
-    const data = await fetchBrawlPlayer(tag) as BrawlPlayer
     if (!data || data === null) {
       await ctx.write({
-        content: `ERROR, CONTACT ADMIN`
+        content: `Error, try again later.`
       })
       return
     }
 
-    const page = await browser.newPage();
-    const result = generateBrawlStatsHtml(data)
-    
-    await page.setViewport({ width: 650, height: 200 })
-    await page.setContent(result)
-    await page.waitForSelector('body')
-    const screenshot = await page.screenshot({
-      encoding: 'base64',
-      type: 'webp',
-      fullPage: true
-    })
-    await page.close()
-    
-    const buffer = Buffer.from(screenshot, 'base64')
+    const stats = [
+      `Player: ${data.name}`,
+      `Trophies: ${data.trophies} 🏆`,
+      `3vs3 Victories: ${data['3vs3Victories']} 🏅`,
+      `Solo Victories: ${data.soloVictories} 🏅`,
+      `Duo Victories: ${data.duoVictories} 🏅`,
+      `Total Brawlers: ${data.brawlers.length} 🤗`,
+    ].join('<br>')
+    const bsIconUrl = "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoic3VwZXJjZWxsXC9maWxlXC9WeGZCYTJZM2VidFliNHhRNDJhdS5wbmcifQ:supercell:4JRrhrJjKTux8065H80-L2EiHN2bJg9E9QuhQD9ztIs?width=120"
+    const html = await imgHtmlT1(bsIconUrl, stats)
+
+    const buffer:any = await imgGen(html)
     await ctx.write({
       files: [
         new AttachmentBuilder()
@@ -77,44 +147,6 @@ export default class brawlStatsCommand extends Command {
     });
     return
   }
-}
-
-function generateBrawlStatsHtml(data: BrawlPlayer): string {
-  const stats = [
-    `Player: ${data.name}`,
-    `Trophies: ${data.trophies} 🏆`,
-    `3vs3 Victories: ${data['3vs3Victories']} 🏅`,
-    `Solo Victories: ${data.soloVictories} 🏅`,
-    `Duo Victories: ${data.duoVictories} 🏅`,
-    `Total Brawlers: ${data.brawlers.length} 🤗`,
-  ].join('<br>')
-
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=auto, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background-color: #1e1e2e;
-      color: #cdd6f4;
-    }
-  </style>
-</head>
-<body style="width: 650px">
-  <div class="container mx-auto py-4">
-    <div class="px-6 flex items-center">
-      <img src="https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoic3VwZXJjZWxsXC9maWxlXC9WeGZCYTJZM2VidFliNHhRNDJhdS5wbmcifQ:supercell:4JRrhrJjKTux8065H80-L2EiHN2bJg9E9QuhQD9ztIs?width=2400" class="h-32 w-32 object-contain mr-6" alt="Brawl Stars Logo" />
-      <div class="text-lg font-bold text-[#cdd6f4]">${stats}</div>
-    </div>
-  </div>
-  <footer class="bg-[#313244] text-center py-2">
-    <p class="text-sm text-[#cdd6f4]">Powered by FSD</p>
-  </footer>
-</body>
-</html>`;
 }
 
 async function fetchBrawlPlayer(playerTag: string) {
@@ -128,7 +160,7 @@ async function fetchBrawlPlayer(playerTag: string) {
       }
     })
     if (!res.ok) {
-      console.error(`Error fetching Brawl Stars player data: ${res.statusText}`)
+      logger.debug(`Error fetching Brawl Stars player data: ${res.statusText}`)
       return null
     }
     return res.json()

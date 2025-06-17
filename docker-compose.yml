@@ -1,0 +1,40 @@
+services:
+  app:
+    image: oven/bun:latest
+    working_dir: /app
+    container_name: fantastic_spoon_app
+    user: root
+    volumes:
+      - .:/app
+      - ./docker/entrypoint.sh:/entrypoint.sh
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    environment:
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - NODE_ENV=development
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    depends_on:
+      chrome:
+        condition: service_healthy
+
+  chrome:
+    image: browserless/chrome:latest
+    container_name: fantastic_spoon_chrome
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    environment:
+      - MAX_CONCURRENT_SESSIONS=10
+      - CONNECTION_TIMEOUT=300000
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1080
+    ports:
+      - "21542:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/json/version"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
