@@ -3,6 +3,7 @@ out
 dist
 *.tgz
 logs
+seyfert-logs/
 _.log
 report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .env
@@ -12,7 +13,5 @@ db/
 src/generated/
 bun.lock
 commands.json
-
+.idea/
 core
-bun.lock
-commands.json

@@ -1,30 +1,10 @@
 import { Client } from "seyfert";
-import puppeteer from "puppeteer"; 
-import { pino } from "pino";
-import fs from "fs";
-import pretty from "pino-pretty";
+import puppeteer from "puppeteer";
 
 import type { ParseClient } from "seyfert";
 
+import { logger } from "./utils/logger";
 import { PrismaClient } from "./generated/prisma";
-
-let streams = [
-  {stream: fs.createWriteStream('./logs/info.stream.out')},
-  {stream: pretty()},
-  {level: 'debug', stream: fs.createWriteStream('./logs/debug.stream.out')},
-  {level: 'fatal', stream: fs.createWriteStream('./logs/fatal.stream.out')}
-]
-
-export const logger = pino({
-  level: 'debug',
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-      translateTime: 'SYS:standard',
-    }
-  }
-}, pino.multistream(streams))
 
 export const prisma = new PrismaClient()
 declare module 'seyfert' {
@@ -38,6 +18,7 @@ export const browser = await puppeteer.connect({
 })
 
 client.start()
-  .then(() => client.uploadCommands({ cachePath: './commands.json' }))
-
-logger.info("ONLINE")
+    .then(() => {
+        logger.info("FSD ONLINE")
+        return client.uploadCommands({ cachePath: './commands.json' });
+    });

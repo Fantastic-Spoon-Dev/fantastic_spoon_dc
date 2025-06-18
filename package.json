@@ -17,8 +17,6 @@
     "@ahdg/minecraftstatuspinger": "^1.1.5",
     "@prisma/client": "^6.10.0",
     "@sfirew/minecraft-motd-parser": "^1.1.4",
-    "pino": "^9.7.0",
-    "pino-pretty": "^13.0.0",
     "puppeteer": "^24.7.2",
     "seyfert": "^3.0.0"
   }
