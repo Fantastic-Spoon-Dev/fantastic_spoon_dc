@@ -1,4 +1,14 @@
-import { AttachmentBuilder, Command, CommandContext, createStringOption, Declare, Options } from 'seyfert';
+import {
+	ActionRow,
+	AttachmentBuilder,
+	Command,
+	CommandContext,
+	createStringOption,
+	Declare,
+	Options,
+	StringSelectMenu,
+	StringSelectOption
+} from 'seyfert';
 import { imgGen } from '../utils/imageGen';
 
 const dark = ['#2e3440', '#cdd6f4', '#434c5e']
@@ -31,7 +41,19 @@ export default class HeadlinesCommand extends Command {
 
 		let cardsHtml = '';
 
+		const menu = new StringSelectMenu()
+			.setCustomId('news-menu')
+			.setPlaceholder('Read more...');
+
 		resJson.articles.forEach((article: any, index: number) => {
+			if (article.title.length > 90) {
+				article.title = article.title.substring(0, 90) + '...';
+			}
+			menu.addOption(
+				new StringSelectOption()
+					.setLabel(`${index + 1}. ${article.title}`)
+					.setValue(index.toString())
+			);
 			cardsHtml += `
         		<div class="flex justify-center w-full">
             		<div class="w-[645px] bg-[${dark[2]}] shadow-lg rounded-2xl p-4">
@@ -42,6 +64,8 @@ export default class HeadlinesCommand extends Command {
     		`;
 		});
 
+		const stringRow = new ActionRow<StringSelectMenu>().setComponents([menu]);
+
 		const html = await fHtml(cardsHtml);
 		const imgBuffer = await imgGen(html);
 
@@ -50,7 +74,8 @@ export default class HeadlinesCommand extends Command {
 				new AttachmentBuilder()
 					.setName('news.png')
 					.setFile('buffer', imgBuffer)
-			]
+			],
+			components: [stringRow],
 		});
 	}
 }
