@@ -2,7 +2,7 @@ services:
   app:
     image: oven/bun:latest
     working_dir: /app
-    container_name: fantastic_spoon_app
+    container_name: fsd_app
     user: root
     volumes:
       - .:/app
@@ -19,9 +19,21 @@ services:
       chrome:
         condition: service_healthy
 
+  link:
+    image: oven/bun:latest
+    working_dir: /fantastic_link
+    container_name: fsd_link
+    user: root
+    volumes:
+      - ./fantastic-link:/fantastic_link
+      - ./fantastic-link/docker/entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    ports:
+      - "51642:51642"
+
   chrome:
     image: browserless/chrome:latest
-    container_name: fantastic_spoon_chrome
+    container_name: fsd_chrome
     deploy:
       resources:
         limits:

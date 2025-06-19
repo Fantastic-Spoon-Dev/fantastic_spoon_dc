@@ -10,8 +10,8 @@ import {
 	StringSelectOption
 } from 'seyfert';
 import { imgGen } from '../utils/imageGen';
-
-const dark = ['#2e3440', '#cdd6f4', '#434c5e']
+import { dark } from '../utils/colors';
+import { logger } from '../utils/logger'
 
 const options = {
 	category: createStringOption({
@@ -43,16 +43,27 @@ export default class HeadlinesCommand extends Command {
 
 		const menu = new StringSelectMenu()
 			.setCustomId('news-menu')
-			.setPlaceholder('Read more...');
+			.setPlaceholder('Read more about...');
 
-		resJson.articles.forEach((article: any, index: number) => {
+		for (let index = 0; index < resJson.articles.length; index++) {
+			const article = resJson.articles[index];
 			if (article.title.length > 90) {
 				article.title = article.title.substring(0, 90) + '...';
 			}
+			const fl_url = "https://fsd.itzdrli.cc"
+			const fl_res = await fetch(`${fl_url}/shorten`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({url: article.url})
+			})
+			if (!fl_res) logger.error('Failed to shorten URL');
+			const fl_resJson: any = await fl_res.json();
 			menu.addOption(
 				new StringSelectOption()
 					.setLabel(`${index + 1}. ${article.title}`)
-					.setValue(index.toString())
+					.setValue(fl_resJson.url)
 			);
 			cardsHtml += `
         		<div class="flex justify-center w-full">
@@ -62,7 +73,7 @@ export default class HeadlinesCommand extends Command {
             		</div>
         		</div>
     		`;
-		});
+		}
 
 		const stringRow = new ActionRow<StringSelectMenu>().setComponents([menu]);
 

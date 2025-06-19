@@ -1,4 +1,5 @@
 import { browser } from "..";
+import { dark } from "./colors";
 
 export async function imgHtmlT1(icon: any, text: string) {
   return `
@@ -10,8 +11,8 @@ export async function imgHtmlT1(icon: any, text: string) {
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background-color: #1e1e2e;
-      color: #cdd6f4;
+      background-color: ${dark[0]};
+      color: ${dark[1]};
     }
   </style>
 </head>
@@ -20,12 +21,12 @@ export async function imgHtmlT1(icon: any, text: string) {
     <div class="px-6 flex items-center gap-10">
       ${icon ? `<div class="flex-shrink-0"><img src=${icon} alt="icon" class="w-auto h-auto rounded-lg" /></div>` : ''}
       <div class="flex-grow pl-25">
-        <div class="text-lg font-bold text-[#cdd6f4]">${text}</div>
+        <div class="text-lg font-bold text-[${dark[1]}]">${text}</div>
       </div>
     </div>
   </div>
-  <footer class="bg-[#313244] text-center py-2">
-    <p class="text-sm text-[#cdd6f4]">Powered by FSD</p>
+  <footer class="bg-[${dark[2]}] text-center py-2">
+    <p class="text-sm text-[${dark[1]}]">Powered by FSD</p>
   </footer>
 </body>
 </html>`;
