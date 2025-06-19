@@ -42,6 +42,5 @@ export async function imgGen(html: any) {
     fullPage: true
   })
   await page.close()
-  const buffer = Buffer.from(screenshot, 'base64')
-  return buffer
+  return Buffer.from(screenshot, 'base64')
 }
