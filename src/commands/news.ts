@@ -11,7 +11,7 @@ import {
 } from 'seyfert';
 import { imgGen } from '../utils/imageGen';
 import { dark } from '../utils/colors';
-import { logger } from '../utils/logger'
+import { logger } from '../utils/logger';
 
 const options = {
 	category: createStringOption({
@@ -35,6 +35,7 @@ const options = {
 @Options(options)
 export default class HeadlinesCommand extends Command {
 	async run(ctx: CommandContext<typeof options>) {
+		await ctx.deferReply()
 		const base_url = "https://newsapi.org/v2/top-headlines?pageSize=10&apiKey=" + process.env.NEWS_API_KEY + "&category=" + (ctx.options.category || 'general');
 		const res = await fetch(base_url);
 		const resJson: any = await res.json();
@@ -80,7 +81,7 @@ export default class HeadlinesCommand extends Command {
 		const html = await fHtml(cardsHtml);
 		const imgBuffer = await imgGen(html);
 
-		await ctx.write({
+		await ctx.editOrReply({
 			files: [
 				new AttachmentBuilder()
 					.setName('news.png')

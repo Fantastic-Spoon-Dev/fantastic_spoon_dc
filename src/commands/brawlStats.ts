@@ -38,13 +38,14 @@ const options = {
 
 export default class brawlStatsCommand extends Command {
 	async run(ctx: CommandContext<typeof options>) {
+		ctx.deferReply()
 		let tag = ""
 		if (ctx.options.playertag) {
 			tag = ctx.options.playertag
 			if (!tag.startsWith("#")) tag = "#" + tag
 			const playerTagRegex = /^#[0-9A-Z]{6,10}$/
 			if (!playerTagRegex.test(ctx.options.playertag)) {
-				await ctx.write({
+				await ctx.editOrReply({
 					content: 'Invalid player tag (Example: `#A1B2C3D4E`)'
 				})
 				return
@@ -68,7 +69,7 @@ export default class brawlStatsCommand extends Command {
 					})
 				} catch (e) {
 					logger.error(e)
-					await ctx.write({
+					await ctx.editOrReply({
 						content: `${e}`
 					})
 				}
@@ -82,7 +83,7 @@ export default class brawlStatsCommand extends Command {
 					})
 				} catch (e) {
 					logger.error(e)
-					await ctx.write({
+					await ctx.editOrReply({
 						content: `${e}`
 					})
 				}
@@ -95,7 +96,7 @@ export default class brawlStatsCommand extends Command {
 				}
 			})
 			if (!res) {
-				await ctx.write({
+				await ctx.editOrReply({
 					content: `Provide a valid Brawl Stars player tag`
 				})
 				return
@@ -107,13 +108,13 @@ export default class brawlStatsCommand extends Command {
 		try {
 			data = await fetchBrawlPlayer(tag) as BrawlPlayer
 		} catch (e) {
-			await ctx.write({
+			await ctx.editOrReply({
 				content: `${e}, please try again later`
 			})
 			return
 		}
 		if (!data) {
-			await ctx.write({
+			await ctx.editOrReply({
 				content: `Error, try again later.`
 			})
 			return
@@ -131,7 +132,7 @@ export default class brawlStatsCommand extends Command {
 		const html = await imgHtmlT1(bsIconUrl, stats)
 
 		const buffer: any = await imgGen(html)
-		await ctx.write({
+		await ctx.editOrReply({
 			files: [
 				new AttachmentBuilder()
 					.setName('brawlstats.png')

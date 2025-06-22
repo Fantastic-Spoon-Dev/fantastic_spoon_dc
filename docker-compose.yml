@@ -1,6 +1,6 @@
 services:
   app:
-    image: oven/bun:latest
+    image: node:lts-bookworm
     working_dir: /app
     container_name: fsd_app
     user: root
@@ -12,7 +12,7 @@ services:
         limits:
           memory: 1G
     env_file:
-      - .env.app
+      - .env
     entrypoint: [ "/bin/sh", "/entrypoint.sh" ]
 
   link:

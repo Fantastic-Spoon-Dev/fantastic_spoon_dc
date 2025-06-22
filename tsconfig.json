@@ -23,6 +23,8 @@
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    // Add Node.js types
+    "types": ["node"],
     "noPropertyAccessFromIndexSignature": false
   }
 }
