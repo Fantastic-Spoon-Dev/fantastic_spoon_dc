@@ -15,3 +15,5 @@ bun.lock
 commands.json
 .idea/
 core
+.env.*
+.yarn/

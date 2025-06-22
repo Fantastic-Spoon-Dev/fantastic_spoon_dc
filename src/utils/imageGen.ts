@@ -1,8 +1,9 @@
-import { browser } from "..";
 import { dark } from "./colors";
+import { logger } from "./logger.ts";
+import { firefox } from "playwright-core";
 
 export async function imgHtmlT1(icon: any, text: string) {
-  return `
+	return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,16 +33,20 @@ export async function imgHtmlT1(icon: any, text: string) {
 </html>`;
 }
 
-
-export async function imgGen(html: any) {
-  const page = await browser.newPage()
-  await page.setViewport({ width: 650, height: 200 })
-  await page.setContent(html)
-  const screenshot = await page.screenshot({
-    encoding: 'base64',
-    type: 'webp',
-    fullPage: true
-  })
-  await page.close()
-  return Buffer.from(screenshot, 'base64')
+export async function imgGen(html: any, w: number, h: number) {
+  const browser = await firefox.connect('ws://browser:53333/playwright');
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  await page.setViewportSize({ width: w, height: 2000 });
+  await page.setContent(html);
+  const contentHeight: number = await page.evaluate(() => {
+    // @ts-ignore
+    return document.body.scrollHeight
+  });
+  await page.setViewportSize({ width: w, height: contentHeight });
+  const buffer = await page.screenshot();
+  await page.close();
+  await ctx.close()
+  return buffer;
 }
+

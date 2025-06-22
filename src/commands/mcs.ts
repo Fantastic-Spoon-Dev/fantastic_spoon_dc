@@ -40,8 +40,9 @@ const options = {
 export default class McsCommand extends Command {
 
 	async run(ctx: CommandContext<typeof options>) {
+		await ctx.deferReply()
 		if (ctx.options.ip && !/^(?!:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?$/.test(ctx.options.ip)) {
-			await ctx.write({
+			await ctx.editOrReply({
 				content: 'Invalid Server Address'
 			})
 			return
@@ -75,7 +76,7 @@ export default class McsCommand extends Command {
 			})
 		} catch (e) {
 			logger.error(e)
-			await ctx.write({
+			await ctx.editOrReply({
 				content: `${e}`
 			})
 			return
@@ -87,9 +88,9 @@ export default class McsCommand extends Command {
 		result += `<p>${motdParser(status.description)}</p>`
 		result += `<p>Online - ${status.players.online}/${status.players.max}</p>`
 		const html = await imgHtmlT1(status.favicon, result)
-		const buffer: any = await imgGen(html)
+		const buffer: any = await imgGen(html, 650, 225)
 
-		await ctx.write({
+		await ctx.editOrReply({
 			files: [
 				new AttachmentBuilder()
 					.setName('status.png')

@@ -1,24 +1,22 @@
-import { Client } from "seyfert";
-import puppeteer from "puppeteer";
-
 import type { ParseClient } from "seyfert";
+import { Client } from "seyfert";
 
 import { logger } from "./utils/logger";
 import { PrismaClient } from "./generated/prisma";
 
 export const prisma = new PrismaClient()
 declare module 'seyfert' {
-    interface UsingClient extends ParseClient<Client<true>> { }
+	interface UsingClient extends ParseClient<Client<true>> {
+	}
 }
-
+logger.info("Initializing prisma...");
 const client = new Client();
+logger.info("Prisma initialized");
 
-export const browser = await puppeteer.connect({
-  browserWSEndpoint: 'ws://chrome:3000'
-})
-
+logger.info("Staring FSD")
 client.start()
-    .then(() => {
-        logger.info("FSD ONLINE")
-        return client.uploadCommands({ cachePath: './commands.json' });
-    });
+	.then(() => {
+		logger.info("FSD Online")
+		return client.uploadCommands({cachePath: './commands.json'});
+	});
+
