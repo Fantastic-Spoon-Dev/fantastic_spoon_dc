@@ -19,6 +19,8 @@
     "@sfirew/minecraft-motd-parser": "^1.1.4",
     "hono": "^4.8.0",
     "nanoid": "^5.1.5",
+    "playwright": "^1.53.1",
+    "playwright-core": "^1.53.1",
     "puppeteer": "^24.7.2",
     "seyfert": "^3.0.0"
   },

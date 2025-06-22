@@ -1,8 +1,9 @@
-import { browser } from "..";
 import { dark } from "./colors";
+import { logger } from "./logger.ts";
+import { browser } from "../index.ts";
 
 export async function imgHtmlT1(icon: any, text: string) {
-  return `
+	return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,16 +33,12 @@ export async function imgHtmlT1(icon: any, text: string) {
 </html>`;
 }
 
-
 export async function imgGen(html: any) {
-  const page = await browser.newPage()
-  await page.setViewport({ width: 650, height: 200 })
-  await page.setContent(html)
-  const screenshot = await page.screenshot({
-    encoding: 'base64',
-    type: 'webp',
-    fullPage: true
-  })
+  const ctx = await browser.newContext()
+	const page = await ctx.newPage()
+	await page.setViewportSize({width: 650, height: 200})
+	await page.setContent(html)
   await page.close()
-  return Buffer.from(screenshot, 'base64')
+	return await page.screenshot();
 }
+

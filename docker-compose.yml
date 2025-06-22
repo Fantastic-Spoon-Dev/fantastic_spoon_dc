@@ -11,13 +11,9 @@ services:
       resources:
         limits:
           memory: 1G
-    environment:
-      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-      - NODE_ENV=development
-    entrypoint: ["/bin/sh", "/entrypoint.sh"]
-    depends_on:
-      chrome:
-        condition: service_healthy
+    env_file:
+      - .env.app
+    entrypoint: [ "/bin/sh", "/entrypoint.sh" ]
 
   link:
     image: oven/bun:latest
@@ -27,26 +23,13 @@ services:
     volumes:
       - ./fantastic-link:/fantastic_link
       - ./fantastic-link/docker/entrypoint.sh:/entrypoint.sh
-    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    entrypoint: [ "/bin/sh", "/entrypoint.sh" ]
     ports:
       - "51642:51642"
 
-  chrome:
-    image: browserless/chrome:latest
-    container_name: fsd_chrome
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-    environment:
-      - MAX_CONCURRENT_SESSIONS=10
-      - CONNECTION_TIMEOUT=300000
-      - SCREEN_WIDTH=1920
-      - SCREEN_HEIGHT=1080
+  browser:
+    image: jacoblincool/playwright:firefox-server-1.53.1
+    container_name: fsd_browser
     ports:
-      - "21542:3000"
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/json/version"]
-      interval: 1s
-      timeout: 3s
-      retries: 30
+      - "53333:53333"
+    shm_size: 3gb
