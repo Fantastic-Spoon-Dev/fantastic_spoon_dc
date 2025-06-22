@@ -88,7 +88,7 @@ export default class McsCommand extends Command {
 		result += `<p>${motdParser(status.description)}</p>`
 		result += `<p>Online - ${status.players.online}/${status.players.max}</p>`
 		const html = await imgHtmlT1(status.favicon, result)
-		const buffer: any = await imgGen(html)
+		const buffer: any = await imgGen(html, 650, 225)
 
 		await ctx.editOrReply({
 			files: [

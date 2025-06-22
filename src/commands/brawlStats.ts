@@ -38,7 +38,7 @@ const options = {
 
 export default class brawlStatsCommand extends Command {
 	async run(ctx: CommandContext<typeof options>) {
-		ctx.deferReply()
+		await ctx.deferReply()
 		let tag = ""
 		if (ctx.options.playertag) {
 			tag = ctx.options.playertag
@@ -131,7 +131,7 @@ export default class brawlStatsCommand extends Command {
 		const bsIconUrl = "https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoic3VwZXJjZWxsXC9maWxlXC9WeGZCYTJZM2VidFliNHhRNDJhdS5wbmcifQ:supercell:4JRrhrJjKTux8065H80-L2EiHN2bJg9E9QuhQD9ztIs?width=120"
 		const html = await imgHtmlT1(bsIconUrl, stats)
 
-		const buffer: any = await imgGen(html)
+		const buffer: any = await imgGen(html, 650, 235)
 		await ctx.editOrReply({
 			files: [
 				new AttachmentBuilder()

@@ -33,14 +33,20 @@ export async function imgHtmlT1(icon: any, text: string) {
 </html>`;
 }
 
-export async function imgGen(html: any) {
+export async function imgGen(html: any, w: number, h: number) {
   const browser = await firefox.connect('ws://browser:53333/playwright');
-  const ctx = await browser.newContext()
-	const page = await ctx.newPage()
-	await page.setViewportSize({width: 650, height: 200})
-	await page.setContent(html)
-  const buffer = await page.screenshot()
-  await page.close()
-	return buffer
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  await page.setViewportSize({ width: w, height: 2000 });
+  await page.setContent(html);
+  const contentHeight: number = await page.evaluate(() => {
+    // @ts-ignore
+    return document.body.scrollHeight
+  });
+  await page.setViewportSize({ width: w, height: contentHeight });
+  const buffer = await page.screenshot();
+  await page.close();
+  await ctx.close()
+  return buffer;
 }
 

@@ -7,7 +7,7 @@
     "prisma": "6.10.1"
   },
   "scripts": {
-    "dev": "yarn tsx src/index.ts"
+    "dev": "yarn tsx watch src/index.ts"
   },
   "peerDependencies": {
     "typescript": "^5"
