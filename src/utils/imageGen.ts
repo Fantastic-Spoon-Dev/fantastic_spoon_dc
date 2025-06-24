@@ -3,7 +3,7 @@ import { logger } from "./logger.ts";
 import { firefox } from "playwright-core";
 
 export async function imgHtmlT1(icon: any, text: string) {
-	return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +20,11 @@ export async function imgHtmlT1(icon: any, text: string) {
 <body style="width: 650px">
   <div class="container mx-auto pl-20 pr-8 py-4">
     <div class="px-6 flex items-center gap-10">
-      ${icon ? `<div class="flex-shrink-0"><img src=${icon} alt="icon" class="w-auto h-auto rounded-lg" /></div>` : ''}
+      ${
+        icon
+          ? `<div class="flex-shrink-0"><img src=${icon} alt="icon" class="w-auto h-auto rounded-lg" /></div>`
+          : ""
+      }
       <div class="flex-grow pl-25">
         <div class="text-lg font-bold text-[${dark[1]}]">${text}</div>
       </div>
@@ -34,19 +38,18 @@ export async function imgHtmlT1(icon: any, text: string) {
 }
 
 export async function imgGen(html: any, w: number, h: number) {
-  const browser = await firefox.connect('ws://browser:53333/playwright');
+  const browser = await firefox.connect("ws://browser:53333/playwright");
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   await page.setViewportSize({ width: w, height: 2000 });
   await page.setContent(html);
   const contentHeight: number = await page.evaluate(() => {
     // @ts-ignore
-    return document.body.scrollHeight
+    return document.body.scrollHeight;
   });
   await page.setViewportSize({ width: w, height: contentHeight });
   const buffer = await page.screenshot();
   await page.close();
-  await ctx.close()
+  await ctx.close();
   return buffer;
 }
-
