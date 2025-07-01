@@ -17,3 +17,5 @@ commands.json
 core
 .env.*
 .yarn/
+api/
+api
