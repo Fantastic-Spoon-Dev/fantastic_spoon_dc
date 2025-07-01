@@ -41,8 +41,9 @@ export async function imgGen(html: any, w: number, h: number) {
   const browser = await firefox.connect("ws://browser:53333/playwright");
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
-  await page.setViewportSize({ width: w, height: 2000 });
+  await page.setViewportSize({ width: w, height: h });
   await page.setContent(html);
+  await page.waitForLoadState('networkidle')
   const contentHeight: number = await page.evaluate(() => {
     // @ts-ignore
     return document.body.scrollHeight;
