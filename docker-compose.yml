@@ -32,7 +32,11 @@ services:
     container_name: fsd_browser
     ports:
       - "53333:53333"
+    volumes:
+      - ./fonts:/usr/share/fonts
     shm_size: 3gb
+    environment:
+      - FONTCONFIG_PATH=/etc/fonts
 
   api:
     image: node:lts-bookworm

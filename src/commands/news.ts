@@ -52,8 +52,8 @@ export default class HeadlinesCommand extends Command {
 
     for (let index = 0; index < resJson.articles.length; index++) {
       const article = resJson.articles[index];
-      if (article.title.length > 90) {
-        article.title = article.title.substring(0, 90) + "...";
+      if (article.title.length >= 80) {
+        article.title = article.title.substring(0, 80) + "...";
       }
       const fl_url = "https://fsd.itzdrli.cc";
       let shortUrl = article.url;

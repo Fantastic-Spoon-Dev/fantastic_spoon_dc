@@ -8,15 +8,15 @@ Fantastic Spoon is a utility bot designed by itzdrli, built with [Seyfert](https
 ## Features
   - Minecraft Server Lookup  
   Allows you to query almost any Minecraft:Java server with Fantastic Spoon, with a stylish designed card as the result.
-  ![mc.jpg](https://cr.itzdrli.cc/f/BLUY/mcs.png)
+  ![mc.jpg](https://api.itzdrli.cc/uploads/Snipaste_2025_07_14_15_04_25_02164dc4a4.png)
   - Brawl Stars player stats  
   Allows you to check your stats in Brawl Stars and easily to share with others.
-  ![bsstats.jpg](https://cr.itzdrli.cc/f/d1sp/brawlstats.png)
+  ![bsstats.jpg](https://api.itzdrli.cc/uploads/Snipaste_2025_07_14_15_04_49_6ef0bc4bca.png)
   - Today's Headlines  
   Shows the top 10 (if possible) headlines in the world, you can choose the category you want to see and read more about a specific headline with short link service powered by FSD
-  ![headlines.jpg](https://cr.itzdrli.cc/f/Kyta/headlines.png)
+  ![headlines.jpg](https://api.itzdrli.cc/uploads/Snipaste_2025_07_14_15_05_25_7e42a90e5f.png)
   - What2Eat  
   In a boring day and don't know what to eat? Let me recommend something for ya!
-  ![w2e.jpg](https://cr.itzdrli.cc/f/pEcd/w2e.png)
+  ![w2e.jpg](https://api.itzdrli.cc/uploads/Snipaste_2025_07_14_15_05_57_0724e2abcc.png)
 
 Fantastic Spoon  © 2024 - Present [itzdrli](https://git.itzdrli.cc/itzdrli) - All Rights Reserved. 
