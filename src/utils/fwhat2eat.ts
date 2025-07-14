@@ -34,8 +34,8 @@ export async function w2e(category: string, meal: string) {
   if (randomIndex === -1) randomIndex = 0;
   const name: string = filtered[randomIndex]?.name + "</br>" || "";
   const desc: string = filtered[randomIndex]?.description || "";
-  logger.info(randomIndex);
-  logger.info(filtered[randomIndex]);
+  // logger.info(randomIndex);
+  // logger.info(filtered[randomIndex]);
   let imgUrl: string = "";
   if (filtered[randomIndex]?.image) {
     imgUrl =
